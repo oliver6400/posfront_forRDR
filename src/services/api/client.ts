@@ -1,7 +1,8 @@
 // src/services/api/client.ts
 // Cliente HTTP para conectar con Django backend
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios from 'axios';
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 // Configuración base
 //const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';

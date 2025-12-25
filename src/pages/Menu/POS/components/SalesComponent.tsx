@@ -89,6 +89,7 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [montoInicial, setMontoInicial] = useState<string>("");
   const [montoFinalReal, setMontoFinalReal] = useState<string>("");
+  const [montoFinalSistema, setMontoFinalSistema] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [puntosVenta, setPuntosVenta] = useState<PuntoVenta[]>([]);
@@ -163,6 +164,14 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
     }
   };
 
+  useEffect(() => {
+    const totalVentas = cart.reduce(
+      (sum, item) => sum + item.subtotal,
+      0
+    );
+    setMontoFinalSistema(totalVentas);
+  }, [cart]);
+
   const handleSucursalChange = async (sucursalId: number) => {
     setSelectedSucursal(sucursalId);
 
@@ -200,10 +209,15 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
   }
 
   const handleCerrarCaja = async () => {
-    if (!estadoCaja) return;
+    if (!estadoCaja || !puntoVentaSeleccionado) return;
 
     try{
-      const data = await cerrarCaja(puntoVentaSeleccionado, montoFinalReal, montoFinalSistema);
+      const montoReal = Number(montoFinalReal);
+      if (isNaN(montoReal)) {
+        setError("Monto final real inválido");
+        return;
+      }
+      const data = await cerrarCaja(puntoVentaSeleccionado, montoReal, montoFinalSistema);
       setEstadoCaja(data);
       setCajaAbierta(data.estado === "Cerrado");
       setMensaje('Caja cerrada exitosamente');
@@ -281,7 +295,7 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
     try {
       // ✅ obtener stock real por sucursal
       const inventario = await getStockBySucursal(selectedSucursal);
-      const inv = inventario.find(i => i.producto === producto.id || i.producto.id === producto.id);
+      const inv = inventario.find(i => i.producto.id === producto.id);
 
       const stockActual = inv ? inv.stock_actual : 0;
 
@@ -465,6 +479,7 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
 
         const saleData: CrearVentaPayload = {
           sucursal: selectedSucursal,
+          punto_venta: puntoVentaSeleccionado,
           cliente: selectedClient?.id,
           estado_venta: estadoPendiente?.id || 1,
           detalles: cart.map(item => ({

@@ -201,8 +201,11 @@ export async function getInvoicesBySale(ventaId: number): Promise<FacturaSimulad
 // Obtener métodos de pago
 export async function getPaymentMethods(): Promise<MetodoPago[]> {
   try {
-    const response = await apiClient.get<PaginatedResponse<MetodoPago>>('/ventas/metodos-pago/');
-    return response.data.results || response.data;
+    const response = await apiClient.get<PaginatedResponse<MetodoPago> | MetodoPago[]>('/ventas/metodos-pago/');
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+    return response.data.results ?? [];
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Error al obtener métodos de pago');
   }
@@ -211,8 +214,11 @@ export async function getPaymentMethods(): Promise<MetodoPago[]> {
 // Obtener estados de venta
 export async function getVentaStates(): Promise<EstadoVenta[]> {
   try {
-    const response = await apiClient.get<PaginatedResponse<EstadoVenta>>('/negocio/estados-venta/');
-    return response.data.results || response.data;
+    const response = await apiClient.get<PaginatedResponse<EstadoVenta> | EstadoVenta[]>('/negocio/estados-venta/');
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+    return response.data.results ?? [];
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Error al obtener estados de venta');
   }
@@ -221,8 +227,11 @@ export async function getVentaStates(): Promise<EstadoVenta[]> {
 // Obtener sucursales
 export async function getSucursales(): Promise<Sucursal[]> {
   try {
-    const response = await apiClient.get<PaginatedResponse<Sucursal>>('/negocio/sucursales/');
-    return response.data.results || response.data;
+    const response = await apiClient.get<PaginatedResponse<Sucursal> | Sucursal[]>('/negocio/sucursales/');
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+    return response.data.results ?? [];
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Error al obtener sucursales');
   }
