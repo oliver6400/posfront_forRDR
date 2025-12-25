@@ -1,0 +1,233 @@
+/* src/pages/Menu/POS/components/UserManagement.css */
+
+/* Contenedor principal */
+.user-management {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding: 20px;
+    background-color: #f7fafc;
+    min-height: 100vh;
+}
+
+/* Encabezado */
+.user-management-header {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.user-management-header h2 {
+    margin: 0 0 10px 0;
+    color: #1a202c;
+    font-size: 1.8rem;
+}
+
+.user-management-header p {
+    margin: 0;
+    color: #718096;
+    font-size: 1rem;
+}
+
+/* Contenedor del formulario */
+.user-form-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Formulario */
+.user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.form-group select {
+    background-color: #fff;
+    cursor: pointer;
+}
+
+/* Mensajes del formulario */
+.form-message {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    margin: 10px 0;
+}
+
+.form-message.error {
+    background-color: #fed7d7;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+}
+
+.form-message.success {
+    background-color: #c6f6d5;
+    color: #22543d;
+    border: 1px solid #9ae6b4;
+}
+
+/* Acciones del formulario */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.btn-primary:disabled {
+    background-color: #ced4da;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: #545b62;
+    transform: translateY(-2px);
+}
+
+.btn-secondary:disabled {
+    background-color: #ced4da;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Estilos para campos requeridos */
+.form-group label::after {
+    content: '';
+}
+
+.form-group label:has(+ input[required])::after,
+.form-group label:has(+ select[required])::after {
+    content: ' *';
+    color: #e53e3e;
+    font-weight: 700;
+}
+
+/* Estados de validación */
+.form-group input:invalid:not(:focus):not(:placeholder-shown) {
+    border-color: #e53e3e;
+}
+
+.form-group input:valid:not(:focus):not(:placeholder-shown) {
+    border-color: #28a745;
+}
+
+/* Media Queries para responsividad */
+@media (max-width: 768px) {
+    .user-management {
+        padding: 15px;
+    }
+    
+    .user-form-container {
+        padding: 20px;
+        margin: 0;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .form-actions {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .user-management-header h2 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .user-management {
+        padding: 10px;
+    }
+    
+    .user-form-container {
+        padding: 15px;
+    }
+    
+    .form-group input,
+    .form-group select {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+}

@@ -1,0 +1,207 @@
+/* src/pages/Menu/Menu.css */
+
+/* Contenedor principal del menú y el contenido */
+.menu-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* Encabezado del menú y barra de navegación */
+/* Encabezado del menú - COLAPSABLE */
+.menu-header {
+    background-color: #ffffff;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    width: 220px; /* Reducido de 250px */
+    position: sticky;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transition: width 0.3s ease, padding 0.3s ease;
+}
+
+.menu-header.collapsed {
+    width: 60px;
+    padding: 15px 10px;
+}
+
+/* Toggle button */
+.menu-toggle {
+    position: absolute;
+    top: 15px;
+    right: -15px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    z-index: 10;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.menu-toggle:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+}
+
+.menu-header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    transition: opacity 0.3s ease;
+}
+
+.menu-header.collapsed .menu-header-content {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.menu-header h2 {
+    font-size: 1.3rem; /* Reducido */
+    color: #333;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.menu-header p {
+    font-size: 0.8rem; /* Reducido */
+    color: #666;
+    text-align: center;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.menu-options {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+
+.menu-option {
+    width: 100%;
+    padding: 15px 20px;
+    border: none;
+    background-color: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1rem;
+    color: #444;
+}
+
+.menu-option:hover {
+    background-color: #f0f2f5;
+    transform: translateX(5px);
+}
+
+.menu-option.active {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+}
+
+.menu-option.active .menu-icon,
+.menu-option.active .menu-label {
+    color: #fff;
+}
+
+.menu-icon {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.menu-label {
+    flex-grow: 1;
+}
+
+/* Área de contenido principal */
+.menu-content {
+    flex-grow: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.coming-soon {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 40px;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 40px auto;
+}
+
+.coming-soon h3 {
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.coming-soon p {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Media Queries para responsividad */
+@media (max-width: 768px) {
+    .menu-container {
+        flex-direction: column;
+    }
+
+    .menu-header {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 15px 20px;
+        position: static;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .menu-header h2,
+    .menu-header p {
+        display: none; /* Ocultar para ahorrar espacio en móviles */
+    }
+
+    .menu-options {
+        flex-direction: row;
+        justify-content: space-around;
+        width: 100%;
+        gap: 5px;
+    }
+
+    .menu-option {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        flex: 1;
+        font-size: 0.8rem;
+    }
+
+    .menu-option .menu-label {
+        display: none; /* Ocultar la etiqueta en la navegación móvil */
+    }
+}

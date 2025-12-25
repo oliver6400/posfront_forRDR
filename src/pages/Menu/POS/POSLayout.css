@@ -1,0 +1,245 @@
+/* src/pages/Menu/POS/POSLayout.css */
+
+/* Contenedor principal */
+.pos-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    width: 100%;
+}
+
+/* --- Header del POS --- */
+.pos-header {
+    background-color: #ffffff;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.pos-header h1 {
+    font-size: 1.5rem;
+    color: #1a202c;
+    margin: 0;
+}
+
+.user-info {
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.datetime {
+    font-size: 0.9rem;
+    color: #718096;
+}
+
+.logout-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #e53e3e;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.logout-btn:hover {
+    background-color: #c53030;
+    transform: translateY(-2px);
+}
+
+/* --- Contenedor principal (sidebar + content) --- */
+.pos-main {
+    display: flex;
+    flex-grow: 1;
+}
+
+/* --- Sidebar (Barra de navegación lateral) --- */
+.pos-sidebar {
+    width: 240px; /* Reducido de 280px */
+    background-color: #ffffff;
+    padding: 15px; /* Reducido */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Reducido */
+    flex-shrink: 0;
+    position: relative;
+    transition: width 0.3s ease, padding 0.3s ease;
+}
+
+
+.pos-sidebar.collapsed {
+    width: 70px;
+    padding: 15px 8px;
+}
+
+
+
+.pos-sidebar.collapsed .nav-content {
+    display: none;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pos-sidebar-toggle {
+    position: absolute;
+    top: 15px;
+    right: -15px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    background-color: #28a745;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    z-index: 10;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.pos-sidebar-toggle:hover {
+    background-color: #218838;
+    transform: scale(1.1);
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Reducido */
+    width: 100%;
+    padding: 12px 15px; /* Reducido */
+    border: none;
+    background-color: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+    background-color: #f7fafc;
+    transform: translateX(5px);
+}
+
+.nav-item.active {
+    background-color: #007bff;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+}
+
+.nav-item .nav-icon {
+    font-size: 1.3rem; /* Reducido */
+    color: #2d3748;
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.nav-item.active .nav-icon {
+    color: #fff;
+}
+
+.nav-item .nav-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-item .nav-label {
+    font-weight: 600;
+    color: #2d3748;
+    transition: color 0.2s ease;
+    font-size: 0.9rem; /* Reducido */
+}
+
+.nav-item.active .nav-label {
+    color: #fff;
+}
+
+.nav-item .nav-description {
+    font-size: 0.75rem; /* Reducido */
+    color: #718096;
+    margin-top: 1px;
+}
+
+.nav-item.active .nav-description {
+    color: #a0c9f1;
+}
+
+/* --- Área de contenido principal --- */
+.pos-content {
+    flex-grow: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+/* Media Queries para responsividad */
+@media (max-width: 1024px) {
+    .pos-main {
+        flex-direction: column;
+    }
+
+    .pos-sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 15px 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        justify-content: space-around;
+        width: 100%;
+        gap: 5px;
+    }
+
+    .nav-item {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        flex: 1;
+        font-size: 0.8rem;
+    }
+
+    .nav-item .nav-content {
+        align-items: center;
+    }
+
+    .nav-item .nav-label {
+        font-size: 0.9rem;
+    }
+    
+    .nav-item .nav-description {
+        display: none; /* Ocultar en la navegación móvil */
+    }
+
+    .pos-content {
+        padding: 20px;
+    }
+}

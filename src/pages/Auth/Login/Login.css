@@ -1,0 +1,177 @@
+/* src/components/Login/Login.css */
+
+/* 🖼️ Contenedor del componente de login */
+.login-container {
+display: flex;
+justify-content: center;
+align-items: center;
+width: 100%;
+padding: 2rem;
+}
+
+/* 💳 Estilo de la tarjeta de login */
+.login-card {
+background: #ffffff;
+border-radius: 12px;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+padding: 2rem;
+width: 100%;
+max-width: 400px;
+text-align: center;
+animation: fadeIn 0.5s ease-in-out;
+}
+
+/* 🏷️ Encabezado del formulario */
+.login-header h1 {
+margin-top: 0;
+margin-bottom: 0.5rem;
+font-size: 2rem;
+color: #333;
+}
+
+.login-header p {
+color: #666;
+margin-bottom: 1.5rem;
+}
+
+/* ⚠️ Mensaje de error */
+.login-error {
+background-color: #ffebee;
+color: #d32f2f;
+border-radius: 8px;
+padding: 1rem;
+margin-bottom: 1.5rem;
+display: flex;
+align-items: center;
+gap: 10px;
+text-align: left;
+animation: shake 0.5s;
+}
+
+.login-error .error-icon {
+font-size: 1.5rem;
+}
+
+/* 📝 Estilos para el formulario */
+.login-form {
+display: flex;
+flex-direction: column;
+gap: 1rem;
+}
+
+.input-group {
+text-align: left;
+}
+
+.input-group label {
+display: block;
+margin-bottom: 0.5rem;
+font-weight: 500;
+color: #555;
+}
+
+.input-group input {
+width: 100%;
+padding: 0.75rem;
+border: 1px solid #ccc;
+border-radius: 8px;
+transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-group input:focus {
+outline: none;
+border-color: #007bff;
+box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.login-button {
+width: 100%;
+padding: 0.75rem;
+background-color: #007bff;
+color: #fff;
+border: none;
+border-radius: 8px;
+font-weight: 600;
+cursor: pointer;
+transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+}
+
+.login-button:hover:not(:disabled) {
+background-color: #0056b3;
+transform: translateY(-2px);
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-button:disabled {
+background-color: #ccc;
+cursor: not-allowed;
+}
+
+/* ⚙️ Estilo del spinner de carga */
+.loading-spinner {
+display: inline-block;
+width: 16px;
+height: 16px;
+border: 2px solid #fff;
+border-top-color: transparent;
+border-radius: 50%;
+animation: spin 1s linear infinite;
+}
+
+/* 🔗 Enlace para recuperar contraseña */
+.login-footer {
+margin-top: 1.5rem;
+font-size: 0.9rem;
+}
+
+.forgot-password-link {
+background: none;
+border: none;
+color: #007bff;
+text-decoration: underline;
+cursor: pointer;
+padding: 0;
+font-size: inherit;
+transition: color 0.3s;
+}
+
+.forgot-password-link:hover {
+color: #0056b3;
+}
+
+/* 📱 Media Queries para responsividad */
+@media (max-width: 500px) {
+.login-card {
+box-shadow: none;
+padding: 1.5rem 1rem;
+border-radius: 0;
+max-width: 100%;
+}
+
+.login-header h1 {
+font-size: 1.75rem;
+}
+}
+
+/* 🔑 Animaciones */
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(-20px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+0% { transform: translateX(0); }
+25% { transform: translateX(-5px); }
+50% { transform: translateX(5px); }
+75% { transform: translateX(-5px); }
+100% { transform: translateX(0); }
+}

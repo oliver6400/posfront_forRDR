@@ -1,0 +1,11 @@
+/* src/App.css */
+
+/* 🖥️ Contenedor principal para toda la aplicación */
+.App {
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+width: 100%;
+padding: 20px;
+}
