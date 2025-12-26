@@ -28,12 +28,12 @@ export function useAuth() {
     }
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     setLoading(true);
     setError(null); // ✅ Limpiar error previo
     try {
-      const response = await apiLogin({ email, password });
-      localStorage.setItem("authToken", response.auth.access_token);
+      const response = await apiLogin({ username, password });
+      localStorage.setItem("authToken", response.access);
       localStorage.setItem("user", JSON.stringify(response.user));
       setUser(response.user);
 

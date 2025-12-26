@@ -140,6 +140,16 @@ export interface MovimientoInventarioDetalle {
   costo_unitario: number;
 }
 
+export interface MovimientoInventarioView {
+  id: number;
+  fecha_hora: string;
+  tipo_movimiento: 'Entrada' | 'Salida';
+  observacion?: string;
+  usuario: number | Usuario;
+  producto: number | Producto;
+  cantidad: number;
+}
+
 // 💰 VENTAS - Basado en apps/ventas/models.py
 export interface Venta {
   id: number;

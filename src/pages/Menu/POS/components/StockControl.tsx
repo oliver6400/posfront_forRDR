@@ -6,7 +6,7 @@ import type {
   ProductoConStock, 
   Sucursal, 
   InventarioSucursal,
-  MovimientoInventario,
+  MovimientoInventarioView,
   CrearProductoPayload
 } from '../../../../types/backend.types';
 import { 
@@ -36,7 +36,7 @@ const StockControl: React.FC<StockControlProps> = ({ user }) => {
   //Esto es para el inventario de sucursal
   const [stockData, setStockData] = useState<InventarioSucursal[]>([]);
 
-  const [movements, setMovements] = useState<MovimientoInventario[]>([]);
+  const [movements, setMovements] = useState<MovimientoInventarioView[]>([]);
   const [lowStockProducts, setLowStockProducts] = useState<ProductoConStock[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -120,12 +120,12 @@ const StockControl: React.FC<StockControlProps> = ({ user }) => {
     const productMap = new Map(productsData.map(p => [p.id, p]));
 
     const productsWithStock = stockInventory.map(inv => {
-      const product = productMap.get(inv.producto); // inv.producto es un id numérico
+      const product = productMap.get(inv.producto.id); // inv.producto es un id numérico
       return product
         ? {
             ...product,
-            stock_actual: parseFloat(inv.stock_actual),
-            stock_minimo: parseFloat(inv.stock_minimo),
+            stock_actual: inv.stock_actual,
+            stock_minimo: inv.stock_minimo,
           }
         : undefined;
     }).filter(p => p !== undefined);
