@@ -1,6 +1,7 @@
 // src/pages/Menu/Menu.tsx
 import React, { useState } from 'react';
 import POS from './POS';
+import Settings from './Settings';
 import type { AuthUser } from '../../types/user.types';
 import './Menu.css';
 
@@ -34,6 +35,12 @@ const menuOptions: MenuOption[] = [
     icon: '👥',
     roles: ['Admin', 'SuperAdmin', 'Supervisor'],
   },
+  {
+    id: 'settings',
+    label: 'Configuración',
+    icon: '⚙️',
+    roles: ['SuperAdmin', 'Admin'],
+  }
   // Puedes agregar más opciones aquí
 ];
 
@@ -68,6 +75,8 @@ const Menu: React.FC<MenuProps> = ({ user }) => {
             <p>Módulo en desarrollo</p>
           </div>
         );
+      case 'settings':
+        return <Settings user={user} />;
       default:
         return <POS user={user} />;
     }

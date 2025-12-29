@@ -1,0 +1,29 @@
+.city-manager {
+  padding: 1.5rem;
+}
+
+.city-manager-header h2 {
+  margin-bottom: 0.25rem;
+}
+
+.city-manager-header p {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.city-form {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.city-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.city-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}

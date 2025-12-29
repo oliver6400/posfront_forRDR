@@ -236,6 +236,25 @@ export async function updatePuntoVenta(id: number, puntoVentaData: Partial<Punto
     }
 }
 
+export async function patchPuntoVenta(
+  id: number,
+  data: Partial<PuntoVenta>
+): Promise<PuntoVenta> {
+  try {
+    const response = await apiClient.patch<PuntoVenta>(
+      `/negocio/puntos-venta/${id}/`,
+      data
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message ||
+      error.response?.data?.nombre?.[0] ||
+      'Error al actualizar punto de venta'
+    );
+  }
+}
+
 // 📊 ESTADOS DE VENTA
 
 // Listar estados de venta
