@@ -29,24 +29,35 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({ user }) => {
     return requiredRoles.includes(user.role);
   };
 
-  const menuItems = [
+  interface MenuItem {
+    id: SettingsView;
+    label: string;
+    description: string;
+    icon: string;
+    roles: string[];
+  }
+
+  const menuItems: MenuItem[] = [
     {
       id: 'cities',
       label: 'Ciudades',
       icon: '🌍',
       roles: ['SuperAdmin', 'Admin'],
+      description: 'Gestionar ciudades'
     },
     {
       id: 'branches',
       label: 'Sucursales',
       icon: '🏢',
       roles: ['SuperAdmin', 'Admin'],
+      description: 'Gestionar sucursales'
     },
     {
       id: 'cash_registers',
       label: 'Cajas POS',
       icon: '💰',
       roles: ['SuperAdmin', 'Admin'],
+      description: 'Gestionar cajas registradoras'
     },
   ];
 
