@@ -227,6 +227,32 @@
         font-size: 0.8rem;
     }
 
+    /* Header compacto */
+    .settings-header {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .header-left {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .header-right {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .datetime {
+        display: none;
+    }
+
+    .settings-sidebar-toggle {
+        display: none;
+    }
+
     .nav-item .nav-content {
         align-items: center;
     }
