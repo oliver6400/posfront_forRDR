@@ -116,7 +116,7 @@ export interface ImagenProducto {
 export interface InventarioSucursal {
   id: number;
   sucursal: number;
-  producto: Producto;
+  producto: number;
   stock_actual: number;
   stock_minimo: number;
 }
@@ -127,8 +127,6 @@ export interface MovimientoInventario {
   usuario: number | Usuario;
   fecha_hora: Timestamp;
   tipo_movimiento: 'Entrada' | 'Salida';
-  origen_id: number;
-  origen_tipo: string;
   observacion?: string;
 }
 
@@ -253,6 +251,17 @@ export interface CrearVentaPayload {
     referencia?: string;
   }>;
   total_descuento?: number;
+}
+
+export interface CrearMovimientoInventarioPayload {
+  sucursal: number;
+  tipo_movimiento: 'Entrada' | 'Salida';
+  observacion?: string;
+  detalles: Array<{
+    producto: number;
+    cantidad: number;
+    costo_unitario: number;
+  }>;
 }
 
 export interface CrearProductoPayload extends Omit<Producto, 'id'> {}

@@ -9,7 +9,8 @@ import type {
   FiltroProductos,
   PaginatedResponse,
   InventarioSucursal,
-  ActualizarStockPayload
+  ActualizarStockPayload,
+  CrearMovimientoInventarioPayload
 } from '../../types/backend.types';
 
 // 📦 PRODUCTOS
@@ -223,4 +224,15 @@ export async function getInventoryMovements(filters: {
   }
 }
 
+// Crear movimiento de inventario
+export async function createInventoryMovement(movementData: CrearMovimientoInventarioPayload) {
+  try {
+    console.log("Payload enviado:", movementData);
+    const response = await apiClient.post('/inventario/movimientos/entrada/', movementData);
+    return response.data;
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || 'Error al crear movimiento de inventario';
+    throw new Error(errorMessage);
+  }
+}
 

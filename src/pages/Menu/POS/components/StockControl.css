@@ -1,65 +1,70 @@
 /* src/pages/Menu/POS/components/StockControl.css */
-/* Estilos generales */
+/* =========================
+   STOCK VIEW
+========================= */
 .stock-view {
   padding: 20px;
 }
 
-.search-bar {
-  margin-bottom: 15px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-/* Contenedor de la tabla con desplazamiento horizontal */
+/* =========================
+   SCROLL HORIZONTAL
+========================= */
 .table-container {
-  display: block;
+  width: 100%;
   overflow-x: auto;
-  width: 100%;
 }
 
-/* La tabla con un ancho que se adapta, y columnas de tamaño fijo */
+/* =========================
+   TABLA STOCK
+========================= */
 .stock-table {
+  min-width: 900px;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Header y filas */
+.stock-table .table-header,
+.stock-table .table-row {
   display: grid;
-  grid-template-columns: 100px 100px 100px 100px 100px 100px; /* Tamaño fijo para cada columna */
-  gap: 10px; /* Espaciado más pequeño entre columnas */
-  text-align: center;
-  width: 100%;
+  grid-template-columns: 120px 2fr 1fr 1fr 1.2fr 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
 }
 
-.table-header {
-  display: grid;
-  grid-template-columns: 100px 100px 100px 100px 100px 100px; /* Mismo tamaño fijo para columnas */
-  font-weight: bold;
-  background-color: #f4f4f4;
-  padding: 10px;
-  border-radius: 5px;
-  text-align: center;
+/* Header */
+.stock-table .table-header {
+  background-color: #f0f2f5;
+  font-weight: 600;
 }
 
-.table-header span {
-  padding: 5px;
-  white-space: nowrap; /* Asegura que el texto no se divida */
+/* Fila */
+.stock-table .table-row {
+  border-bottom: 1px solid #e9ecef;
 }
 
-/* Fila de la tabla */
-.table-row {
-  display: grid;
-  grid-template-columns: 100px 100px 100px 100px 100px 100px; /* Tamaño fijo para las columnas */
-  gap: 10px; /* Espaciado pequeño */
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
+.stock-table .table-row:last-child {
+  border-bottom: none;
 }
 
-.table-row span {
-  padding: 5px;
+.stock-table .table-row:hover {
+  background-color: #fbfdfe;
+}
+
+/* Texto */
+.stock-table span {
   white-space: nowrap;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .stock-table {
+    min-width: 850px;
+  }
 }
 
 /* Estado del producto */
@@ -543,7 +548,7 @@ input[type="checkbox"] {
 
 .movements-table .table-header,
 .movements-table .table-row {
-    grid-template-columns: 1fr 1.5fr 1fr 0.8fr 1fr 2fr;
+    grid-template-columns: 160px 1fr 120px 120px 160px 2fr;
 }
 
 .table-header {
@@ -640,21 +645,130 @@ input[type="checkbox"] {
 }
 
 /* Estilos para la vista de movimientos */
+/* ===========================
+   VISTA DE MOVIMIENTOS
+=========================== */
+
+.movements-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Botón crear movimiento */
+.movement-btn {
+  align-self: flex-end;
+  background-color: #17a2b8;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.movement-btn:hover {
+  background-color: #138496;
+}
+
+/* ===========================
+   TABLA DE MOVIMIENTOS
+=========================== */
+.movements-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+.movements-table {
+  min-width: 950px; /* 👈 fuerza scroll en laptops pequeñas */
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Header y filas */
+.movements-table .table-header,
+.movements-table .table-row {
+  display: grid;
+  grid-template-columns: 100px 1fr 100px 80px 80px 2fr;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+}
+
+/* Cabecera */
+.movements-table .table-header {
+  background-color: #f0f2f5;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* Fila */
+.movements-table .table-row {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.movements-table .table-row:last-child {
+  border-bottom: none;
+}
+
+.movements-table .table-row:hover {
+  background-color: #fbfdfe;
+}
+
+/* Texto */
+.movements-table span {
+  font-size: 0.95rem;
+  word-break: break-word;
+}
+
+/* Fecha */
+.movement-date small {
+  display: block;
+  font-size: 12px;
+  color: #6c757d;
+}
+
+/* ===========================
+   TIPOS DE MOVIMIENTO
+=========================== */
+
+.movement-type {
+  font-weight: 600;
+}
+
 .movement-type.entrada {
-    color: #28a745;
-    font-weight: 600;
+  color: #28a745;
 }
+
 .movement-type.salida {
-    color: #dc3545;
-    font-weight: 600;
+  color: #dc3545;
 }
+
 .movement-type.ajuste {
-    color: #007bff;
-    font-weight: 600;
+  color: #007bff;
 }
+
 .movement-type.transferencia {
-    color: #6c757d;
-    font-weight: 600;
+  color: #6c757d;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+/* Tablets y móviles */
+@media (max-width: 768px) {
+  .movements-table {
+    overflow-x: auto;
+  }
+
+  .movements-table .table-header,
+  .movements-table .table-row {
+    min-width: 900px;
+  }
 }
 
 /* Modal de ajuste de stock */

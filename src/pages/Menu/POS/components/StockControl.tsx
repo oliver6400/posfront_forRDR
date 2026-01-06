@@ -17,7 +17,8 @@ import {
   getInventoryMovements,
   createProduct,
   deleteProduct,
-  updateProduct
+  updateProduct,
+  createInventoryMovement
 } from '../../../../services/api/products.api';
 import { getSucursales } from '../../../../services/api/sales.api';
 
@@ -47,6 +48,19 @@ const StockControl: React.FC<StockControlProps> = ({ user }) => {
   const [newStock, setNewStock] = useState<number>(0);
   const [newMinStock, setNewMinStock] = useState<number>(0);
   const [adjustReason, setAdjustReason] = useState('');
+
+  // Movimiento
+  const [isMovementFormVisible, setIsMovementFormVisible] = useState(false);
+  const [movementType, setMovementType] = useState<'Entrada' | 'Salida'>('Entrada');
+  const [movementObservation, setMovementObservation] = useState('');
+  // Detalles
+  const [movementDetails, setMovementDetails] = useState<{
+    producto: number;
+    cantidad: string;
+    costo_unitario: string;
+  }[]>([
+    { producto: 0, cantidad: '', costo_unitario: '' }
+  ]);
 
   // Modal and form states
   const [newProductData, setNewProductData] = useState<CrearProductoPayload>({
@@ -85,6 +99,8 @@ const StockControl: React.FC<StockControlProps> = ({ user }) => {
   };
 
   const loadStockData = async () => {
+    console.log('viewMode:', viewMode);
+    console.log('selectedSucursal:', selectedSucursal);
     if (!selectedSucursal) return;
     
     setIsLoading(true);
@@ -112,25 +128,26 @@ const StockControl: React.FC<StockControlProps> = ({ user }) => {
 
   const loadCurrentStock = async () => {
     const [productsData, stockInventory] = await Promise.all([
-      getProducts(), // ahora devuelve Producto[]
+      getProducts(),
       getStockBySucursal(selectedSucursal!)
     ]);
 
-    // Diccionario de productos por id
     const productMap = new Map(productsData.map(p => [p.id, p]));
 
-    const productsWithStock = stockInventory.map(inv => {
-      const product = productMap.get(inv.producto.id); // inv.producto es un id numérico
-      return product
-        ? {
-            ...product,
-            stock_actual: inv.stock_actual,
-            stock_minimo: inv.stock_minimo,
-          }
-        : undefined;
-    }).filter(p => p !== undefined);
+    const productsWithStock: ProductoConStock[] = stockInventory
+      .map(inv => {
+        const product = productMap.get(inv.producto); // ✅ AHORA SÍ
+        if (!product) return null;
 
-    setProducts(productsWithStock as ProductoConStock[]);
+        return {
+          ...product,
+          stock_actual: inv.stock_actual,
+          stock_minimo: inv.stock_minimo,
+        };
+      })
+      .filter(Boolean) as ProductoConStock[];
+
+    setProducts(productsWithStock);
   };
 
   const loadProducts = async () => {
@@ -144,7 +161,8 @@ const StockControl: React.FC<StockControlProps> = ({ user }) => {
       page: 1,
       limit: 50
     });
-    setMovements(movementsData.results || []);
+    setMovements(movementsData);
+    console.log(movementsData);
   };
 
   const loadLowStockProducts = async () => {
@@ -240,6 +258,55 @@ const StockControl: React.FC<StockControlProps> = ({ user }) => {
     } catch (error) {
       console.error('Error creando producto:', error);
       alert('Error al crear el producto');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Función para manejar el envío del formulario y crear moimiento de inventario
+  const handleCreateMovements = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedSucursal) {
+      alert("Seleccione una sucursal");
+      return;
+    }
+
+    if (!movementObservation.trim()) {
+      alert("La observación es obligatoria");
+      return;
+    }
+
+    if (!movementDetails[0].producto) {
+      alert("Seleccione un producto");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await createInventoryMovement({
+        sucursal: selectedSucursal,
+        tipo_movimiento: movementType,
+        observacion: movementObservation,
+        detalles: movementDetails.map(d => ({
+          producto: d.producto,
+          cantidad: Number(d.cantidad),
+          costo_unitario: Number(d.costo_unitario)
+        }))
+      });
+
+      alert("Movimiento creado correctamente");
+
+      // Reset
+      setMovementObservation('');
+      setMovementDetails([{ producto: 0, cantidad: '', costo_unitario: '' }]);
+      setIsMovementFormVisible(false);
+
+      loadMovements();
+      loadCurrentStock();
+    } catch (error) {
+      console.error(error);
+      alert("Error al crear el movimiento");
     } finally {
       setIsLoading(false);
     }
@@ -452,6 +519,14 @@ const StockControl: React.FC<StockControlProps> = ({ user }) => {
       {/* Vista de Movimientos */}
       {viewMode === 'movements' && (
         <div className="movements-view">
+          <div className="button-container">
+            <button 
+              className="movement-btn"
+              onClick={() => setIsMovementFormVisible(true)} // Controla la visibilidad del formulario
+            >
+              Crear Movimiento de Stock
+            </button>
+          </div>
           <h3>Movimientos de Inventario</h3>
           
           {movements.length === 0 ? (
@@ -459,37 +534,39 @@ const StockControl: React.FC<StockControlProps> = ({ user }) => {
               <p>No hay movimientos registrados</p>
             </div>
           ) : (
-            <div className="movements-table">
-              <div className="table-header">
-                <span>Fecha</span>
-                <span>Producto</span>
-                <span>Tipo</span>
-                <span>Cantidad</span>
-                <span>Usuario</span>
-                <span>Observación</span>
-              </div>
-
-              {movements.map(movement => (
-                <div key={movement.id} className="table-row">
-                  <span className="movement-date">
-                    {new Date(movement.fecha_hora).toLocaleDateString('es-ES')}
-                    <small>{new Date(movement.fecha_hora).toLocaleTimeString('es-ES')}</small>
-                  </span>
-                  <span className="movement-product">
-                    {typeof movement.producto === 'object' ? movement.producto.nombre : movement.producto}
-                  </span>
-                  <span className={`movement-type ${movement.tipo_movimiento.toLowerCase()}`}>
-                    {movement.tipo_movimiento}
-                  </span>
-                  <span className="movement-quantity">{movement.cantidad}</span>
-                  <span className="movement-user">
-                    {typeof movement.usuario === 'object' ? movement.usuario.nombre : movement.usuario}
-                  </span>
-                  <span className="movement-observation">
-                    {movement.observacion || '-'}
-                  </span>
+            <div className="movements-table-wrapper">
+              <div className="movements-table">
+                <div className="table-header">
+                  <span>Fecha</span>
+                  <span>Producto</span>
+                  <span>Tipo</span>
+                  <span>Cantidad</span>
+                  <span>Usuario</span>
+                  <span>Observación</span>
                 </div>
-              ))}
+
+                {movements.map(movement => (
+                  <div key={movement.id} className="table-row">
+                    <span className="movement-date">
+                      {new Date(movement.fecha_hora).toLocaleDateString('es-ES')}
+                      <small>{new Date(movement.fecha_hora).toLocaleTimeString('es-ES')}</small>
+                    </span>
+                    <span className="movement-product">
+                      {typeof movement.producto === 'object' ? movement.producto.nombre : movement.producto}
+                    </span>
+                    <span className={`movement-type ${movement.tipo_movimiento.toLowerCase()}`}>
+                      {movement.tipo_movimiento}
+                    </span>
+                    <span className="movement-quantity">{movement.cantidad}</span>
+                    <span className="movement-user">
+                      {typeof movement.usuario === 'object' ? movement.usuario.nombre : movement.usuario}
+                    </span>
+                    <span className="movement-observation">
+                      {movement.observacion || '-'}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -648,6 +725,111 @@ const StockControl: React.FC<StockControlProps> = ({ user }) => {
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para Crear Nuevo Movimiento de productos */}
+      {viewMode === 'movements' && isMovementFormVisible && (
+        <div className="movement-form-modal">
+          <div className="modal-content">
+            <h3>Crear Nuevo Movimiento</h3>
+
+            <form onSubmit={handleCreateMovements}>
+              {/* Tipo de Movimiento */}
+              <div className="form-group">
+                <label>Tipo de Movimiento *</label>
+                <select
+                  value={movementType}
+                  onChange={(e) => setMovementType(e.target.value as 'Entrada' | 'Salida')}
+                  required
+                >
+                  <option value="Entrada">Entrada</option>
+                  <option value="Salida">Salida</option>
+                </select>
+              </div>
+
+              {/* Observacion */}
+              <div className="form-group">
+                <label>Observación *</label>
+                <textarea
+                  value={movementObservation}
+                  onChange={(e) => setMovementObservation(e.target.value)}
+                  placeholder="Justifique el movimiento de inventario"
+                  required
+                />
+              </div>
+
+              {/* Producto */}
+              <div className="form-group">
+                <label>Producto *</label>
+                <select
+                  value={movementDetails[0].producto}
+                  onChange={(e) =>
+                    setMovementDetails([{
+                      ...movementDetails[0],
+                      producto: Number(e.target.value)
+                    }])
+                  }
+                  required
+                >
+                  <option value="">Seleccione producto</option>
+                  {products.map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Cantidad *</label>
+                <input
+                  type="number"
+                  min={1}
+                  value={movementDetails[0].cantidad}
+                  onChange={(e) =>
+                    setMovementDetails([{
+                      ...movementDetails[0],
+                      cantidad: e.target.value
+                    }])
+                  }
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Costo Unitario *</label>
+                <input
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  value={movementDetails[0].costo_unitario}
+                  onChange={(e) =>
+                    setMovementDetails([{
+                      ...movementDetails[0],
+                      costo_unitario: e.target.value
+                    }])
+                  }
+                  required
+                />
+              </div>
+
+              {/* Botones de acción */}
+              <div className="modal-actions">
+                <button type="submit" className="save-btn" disabled={isLoading}>
+                  Crear Movimiento
+                </button>
+
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => setIsMovementFormVisible(false)}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
