@@ -10,7 +10,8 @@ import type {
   Sucursal,
   CrearVentaPayload,
   PuntoVenta,
-  ArqueoCaja
+  ArqueoCaja,
+  EstadoCajaResponse
 } from '../../../../types/backend.types';
 import {
   searchProducts,
@@ -27,10 +28,7 @@ import {
 } from '../../../../services/api/sales.api';
 import { getStockBySucursal } from "../../../../services/api/products.api";
 import { 
-  getPuntosVentaBySucursal, 
-  createPuntoVenta, 
-  updatePuntoVenta, 
-  deletePuntoVenta 
+  getPuntosVentaBySucursal
 } from '../../../../services/api/business.api';
 
 interface SalesComponentProps {
@@ -130,20 +128,29 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
 
   // cargar puntos de venta de la sucursal seleccionada
   useEffect(() => {
-    if (selectedSucursal) loadPuntosVenta(selectedSucursal);   
+    if (selectedSucursal) {
+      loadPuntosVenta(selectedSucursal);
+    }
   }, [selectedSucursal]);
 
   const loadPuntosVenta = async (sucursalId: number) => {
     try {
       const puntos = await getPuntosVentaBySucursal(sucursalId);
       setPuntosVenta(puntos);
+
+      if (puntos.length > 0) {
+        setPuntoVentaSeleccionado(puntos[0].id); // ✅
+      }
     } catch (error) {
       console.error('Error cargando puntos de venta:', error);
     }
   };
 
   // seleccionar punto de venta
-  
+  const handlePuntoVentaChange = (puntoVentaId: number) => {
+    setPuntoVentaSeleccionado(puntoVentaId);
+  };
+
   // cargar estado de caja al cambiar punto de venta
   useEffect(() => {
     if (puntoVentaSeleccionado) {
@@ -155,12 +162,17 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
     if (!puntoVentaSeleccionado) return;
 
     try {
-      const data = await fetchEstadoCaja(puntoVentaSeleccionado);
-      setEstadoCaja(data);
-      setCajaAbierta(data.estado.toLowerCase() === "abierto");
+      const data: EstadoCajaResponse = await fetchEstadoCaja(puntoVentaSeleccionado);
+
+      console.log("Estado caja recibido:", data);
+
+      setEstadoCaja(data.arqueo);
+      setCajaAbierta(data.abierta);
+
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError('Error cargando estado de caja');
+      setCajaAbierta(false);
     }
   };
 
@@ -200,7 +212,7 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
     try{
       const data = await abrirCaja(puntoVentaSeleccionado, monto);
       setEstadoCaja(data);
-      setCajaAbierta(data.estado === "Abierto");
+      setCajaAbierta(data.estado === "ABIERTA");
       setMensaje('Caja abierta exitosamente');
     } catch (error: any) {
       console.log("Error abrir caja:", error.response?.data);
@@ -209,7 +221,7 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
   }
 
   const handleCerrarCaja = async () => {
-    if (!estadoCaja || !puntoVentaSeleccionado) return;
+    if (!estadoCaja) return;
 
     try{
       const montoReal = Number(montoFinalReal);
@@ -217,9 +229,9 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
         setError("Monto final real inválido");
         return;
       }
-      const data = await cerrarCaja(puntoVentaSeleccionado, montoReal, montoFinalSistema);
+      const data = await cerrarCaja(estadoCaja.id, montoReal);
       setEstadoCaja(data);
-      setCajaAbierta(data.estado === "Cerrado");
+      setCajaAbierta(false);
       setMensaje('Caja cerrada exitosamente');
     } catch (error) {
       console.log(error);
@@ -268,7 +280,7 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
         const inv = inventario.find(
           (i) =>
             i.producto === prod.id || 
-            i.producto.id === prod.id
+            i.producto === prod.id
         );
 
         return {
@@ -295,7 +307,7 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
     try {
       // ✅ obtener stock real por sucursal
       const inventario = await getStockBySucursal(selectedSucursal);
-      const inv = inventario.find(i => i.producto.id === producto.id);
+      const inv = inventario.find(i => i.producto === producto.id);
 
       const stockActual = inv ? inv.stock_actual : 0;
 
@@ -446,6 +458,12 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
 
   // CU01: Procesar venta
   const handleProcessSale = async () => {
+    console.log('ENTRANDO A PROCESAR VENTA');
+    console.log({
+      selectedSucursal,
+      puntoVentaSeleccionado,
+      cajaAbierta
+    });
     if (!puntoVentaSeleccionado) {
       alert("Debes seleccionar un punto de venta");
       return;
@@ -475,7 +493,7 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
 
       setIsProcessing(true);
       try {
-        const estadoPendiente = estados.find(e => e.nombre.toLowerCase().includes('pendiente'));
+        const estadoPendiente = estados.find(e => e.nombre?.toLowerCase().includes('pendiente'));
 
         const saleData: CrearVentaPayload = {
           sucursal: selectedSucursal,
@@ -566,7 +584,7 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
 
         <select
           value={selectedSucursal || ""}
-          onChange={(e) => setSelectedSucursal(Number(e.target.value))}
+          onChange={(e) => handleSucursalChange(Number(e.target.value))}
         >
           <option value="">Seleccionar Sucursal</option>
           {sucursales.map((s) => (
@@ -579,7 +597,7 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
         {selectedSucursal && (
           <select
             value={puntoVentaSeleccionado || ""}
-            onChange={(e) => setPuntoVentaSeleccionado(Number(e.target.value))}
+            onChange={(e) => handlePuntoVentaChange(Number(e.target.value))}
           >
             <option value="">Seleccionar Punto de Venta</option>
             {puntosVenta.map((pv) => (
@@ -875,7 +893,8 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
           <label>Sucursal:</label>
           <select
             value={selectedSucursal || ''}
-            onChange={(e) => setSelectedSucursal(parseInt(e.target.value))}
+            disabled={cajaAbierta}
+            onChange={(e) => handleSucursalChange(Number(e.target.value))}
           >
             <option value="">Seleccionar...</option>
             {sucursales.map(sucursal => (
@@ -886,7 +905,8 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
           </select>
           <select
             value={puntoVentaSeleccionado ?? ""}
-            onChange={(e) => setPuntoVentaSeleccionado(Number(e.target.value))}
+            disabled={cajaAbierta}
+            onChange={(e) => handlePuntoVentaChange(Number(e.target.value))}
           >
             {puntosVenta.map((pv) => (
               <option key={pv.id} value={pv.id}>{pv.nombre}</option>

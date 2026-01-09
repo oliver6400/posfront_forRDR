@@ -216,7 +216,12 @@ export interface ArqueoCaja {
   monto_final_sistema: number;
   monto_final_real: number;
   diferencia: number;
-  estado: 'Abierto' | 'Cerrado';
+  estado: 'ABIERTA' | 'CERRADA';
+}
+
+export interface EstadoCajaResponse {
+  abierta: boolean;
+  arqueo: ArqueoCaja | null;
 }
 
 // 🔄 TIPOS EXTENDIDOS PARA EL FRONTEND

@@ -14,6 +14,7 @@ import type {
   Cliente,
   Sucursal,
   ArqueoCaja,
+  EstadoCajaResponse
 } from '../../types/backend.types';
 
 // 💰 VENTAS
@@ -68,16 +69,14 @@ export async function abrirCaja(punto_venta: number, monto_inicial: number): Pro
   return response.data;
 }
 
-export async function cerrarCaja(arqueo_id: number, monto_final_real: number, monto_final_sistema: number): Promise<ArqueoCaja> {
-  const response = await apiClient.post("/reportes/arqueocaja/${id}/cerrar/", {
-    arqueo_id,
-    monto_final_real,
-    monto_final_sistema,
-  });
+export async function cerrarCaja(arqueo_id: number, monto_final_real: number): Promise<ArqueoCaja> {
+  const response = await apiClient.post("/reportes/arqueocaja/${arqueo_id}/cerrar/", 
+    {monto_final_real}
+);
   return response.data;
 }
 
-export async function estadoCaja(punto_venta: number): Promise<ArqueoCaja | null> {
+export async function estadoCaja(punto_venta: number): Promise<EstadoCajaResponse> {
   const response = await apiClient.get(`/reportes/arqueocaja/abierta/?punto_venta=${punto_venta}`);
   return response.data;
 }
