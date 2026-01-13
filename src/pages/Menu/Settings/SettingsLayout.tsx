@@ -7,13 +7,14 @@ import type { AuthUser } from '../../../types/user.types';
 import CityManager from './components/CityManager';
 import BranchManager from './components/BranchManager';
 import CashRegisterManager from './components/CashRegisterManager';
+import PaymentMethod from './components/PaymentMethod';
 
 import './SettingsLayout.css';
 interface SettingsLayoutProps {
   user: AuthUser;
 } 
 
-type SettingsView = 'cities' | 'branches' | 'cash_registers';
+type SettingsView = 'cities' | 'branches' | 'cash_registers' | 'payment_methods';
 
 const SettingsLayout: React.FC<SettingsLayoutProps> = ({ user }) => {
   const [activeView, setActiveView] = useState<SettingsView>('cities');
@@ -59,6 +60,13 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({ user }) => {
       roles: ['SuperAdmin', 'Admin'],
       description: 'Gestionar cajas registradoras'
     },
+    {
+      id: 'payment_methods',
+      label: 'Métodos de Pago',
+      icon: '💳',
+      roles: ['SuperAdmin', 'Admin'],
+      description: 'Gestionar métodos de pago'
+    }
   ];
 
   const renderActiveComponent = () => {
@@ -69,6 +77,8 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({ user }) => {
         return <BranchManager user={user} />;
       case 'cash_registers':
         return <CashRegisterManager user={user} />;
+      case 'payment_methods':
+        return <PaymentMethod user={user} />;
       default:
         return <CityManager user={user} />;
     }

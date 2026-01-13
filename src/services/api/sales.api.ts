@@ -62,7 +62,7 @@ export async function getPuntoVentaSucursal(sucursalId: number): Promise<number[
 }
 
 export async function abrirCaja(punto_venta: number, monto_inicial: number): Promise<ArqueoCaja> {
-  const response = await apiClient.post("/reportes/arqueocaja/abrir/", {
+  const response = await apiClient.post(`/reportes/arqueocaja/abrir/`, {
     punto_venta,
     monto_inicial,
   });
@@ -70,7 +70,7 @@ export async function abrirCaja(punto_venta: number, monto_inicial: number): Pro
 }
 
 export async function cerrarCaja(arqueo_id: number, monto_final_real: number): Promise<ArqueoCaja> {
-  const response = await apiClient.post("/reportes/arqueocaja/${arqueo_id}/cerrar/", 
+  const response = await apiClient.post(`/reportes/arqueocaja/${arqueo_id}/cerrar/`, 
     {monto_final_real}
 );
   return response.data;
@@ -80,6 +80,11 @@ export async function estadoCaja(punto_venta: number): Promise<EstadoCajaRespons
   const response = await apiClient.get(`/reportes/arqueocaja/abierta/?punto_venta=${punto_venta}`);
   return response.data;
 }
+
+export async function usarioCajaAbierta(): Promise<EstadoCajaResponse> {
+  const response = await apiClient.get(`/reportes/arqueocaja/abierta_usuario/`);
+  return response.data;
+} 
 
 // Crear nueva venta
 export async function createSale(saleData: CrearVentaPayload): Promise<VentaConDetalles> {
@@ -207,6 +212,15 @@ export async function getPaymentMethods(): Promise<MetodoPago[]> {
     return response.data.results ?? [];
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Error al obtener métodos de pago');
+  }
+}
+// Crear método de pago
+export async function createPaymentMethod(nombre: string): Promise<MetodoPago> {
+  try {
+    const response = await apiClient.post<MetodoPago>('/ventas/metodos-pago/', { nombre });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Error al crear método de pago');
   }
 }
 

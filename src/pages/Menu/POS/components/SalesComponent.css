@@ -1,5 +1,62 @@
 /* src/pages/Menu/POS/components/SalesComponent.css */
 
+.open-cash-panel {
+  max-width: 420px;
+  margin: 60px auto;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.open-cash-panel h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #1f2937; /* gris oscuro */
+  font-size: 1.4rem;
+}
+
+.open-cash-panel select,
+.open-cash-panel input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+}
+
+.open-cash-panel select:focus,
+.open-cash-panel input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.open-cash-panel button {
+  margin-top: 8px;
+  padding: 12px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.open-cash-panel button:hover {
+  background: #1d4ed8;
+}
+
+.open-cash-panel button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
 /* Contenedor principal */
 .sales-component {
     display: grid;
@@ -456,6 +513,59 @@ h3 {
     background-color: #ffc107;
     color: #333;
     border: none;
+}
+
+/*CIERRE DE CAJA*/
+.close-pos-btn {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px dashed #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Botón cerrar caja */
+.close-cash-btn {
+    padding: 14px 28px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #dc3545, #b02a37);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(220, 53, 69, 0.35);
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Hover */
+.close-cash-btn:hover {
+    background: linear-gradient(135deg, #c82333, #a71d2a);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(220, 53, 69, 0.45);
+}
+
+/* Active */
+.close-cash-btn:active {
+    transform: scale(0.97);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+/* Estado deshabilitado */
+.close-cash-btn:disabled {
+    background: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Icono opcional */
+.close-cash-btn::before {
+    content: "🔒";
+    font-size: 1.2rem;
 }
 
 /* Media Queries para responsividad */

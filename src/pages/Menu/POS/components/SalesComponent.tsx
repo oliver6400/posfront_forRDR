@@ -24,7 +24,8 @@ import {
   createClient,
   abrirCaja,
   cerrarCaja,
-  estadoCaja as fetchEstadoCaja
+  estadoCaja as fetchEstadoCaja,
+  usarioCajaAbierta
 } from '../../../../services/api/sales.api';
 import { getStockBySucursal } from "../../../../services/api/products.api";
 import { 
@@ -151,6 +152,31 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
     setPuntoVentaSeleccionado(puntoVentaId);
   };
 
+  // verificar si el usuario tiene caja abierta al iniciar sesión
+  useEffect(() => {
+    validarCajaAbierta();
+  }, []);
+
+  const validarCajaAbierta = async () => {
+    try {
+      const data = await usarioCajaAbierta();
+
+      if (data.abierta) {
+        console.log("Caja abierta encontrada:", data);
+        setEstadoCaja(data.arqueo);
+        setCajaAbierta(true);
+      } else {
+        console.log("No hay caja abierta para el usuario.");
+        setCajaAbierta(false);
+      }
+    } catch {
+      console.error("Error verificando caja abierta");
+      setCajaAbierta(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // cargar estado de caja al cambiar punto de venta
   useEffect(() => {
     if (puntoVentaSeleccionado) {
@@ -233,6 +259,12 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
       setEstadoCaja(data);
       setCajaAbierta(false);
       setMensaje('Caja cerrada exitosamente');
+
+      // limpiar estado POS
+      setCart([]);
+      setPayments([]);
+      setSelectedClient(null);
+      setClientNit('');
     } catch (error) {
       console.log(error);
       setError('Error al cerrar caja');
@@ -576,57 +608,48 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
   const { totalPagado, cambio } = calculatePaymentTotals();
   const canProcessSale = cart.length > 0 && totalPagado >= totalNeto;
 
-  // Si no hay caja abierta → Mostrar panel de selección
-  if (!cajaAbierta && !loading) {
-    return (
-      <div>
-        <h2>Seleccione Sucursal y Punto de Venta</h2>
+  if (loading) {
+    return <div>Cargando estado de caja...</div>;
+  }
 
-        <select
-          value={selectedSucursal || ""}
-          onChange={(e) => handleSucursalChange(Number(e.target.value))}
-        >
-          <option value="">Seleccionar Sucursal</option>
-          {sucursales.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.nombre}
-            </option>
+  /* 🔒 NO hay caja → solo aperturar */
+  if (!cajaAbierta) {
+    return (
+      <div className="open-cash-panel">
+        <h2>No hay caja abierta</h2>
+
+        <select onChange={(e) => setSelectedSucursal(+e.target.value)}>
+          <option value="">Sucursal</option>
+          {sucursales.map(s => (
+            <option key={s.id} value={s.id}>{s.nombre}</option>
           ))}
         </select>
 
-        {selectedSucursal && (
-          <select
-            value={puntoVentaSeleccionado || ""}
-            onChange={(e) => handlePuntoVentaChange(Number(e.target.value))}
-          >
-            <option value="">Seleccionar Punto de Venta</option>
-            {puntosVenta.map((pv) => (
-              <option key={pv.id} value={pv.id}>
-                {pv.nombre}
-              </option>
-            ))}
-          </select>
-        )}
+        <select onChange={(e) => setPuntoVentaSeleccionado(+e.target.value)}>
+          <option value="">Punto de Venta</option>
+          {puntosVenta.map(pv => (
+            <option key={pv.id} value={pv.id}>{pv.nombre}</option>
+          ))}
+        </select>
 
-        {puntoVentaSeleccionado && (
-          <div>
-            <label>Monto Inicial</label>
-            <input
-              type="number"
-              value={montoInicial}
-              onChange={(e) => setMontoInicial(e.target.value)}
-              placeholder="Ingrese el monto inicial"
-            />
-          </div>
-        )}
+        <input
+          type="number"
+          placeholder="Monto inicial"
+          value={montoInicial}
+          onChange={(e) => setMontoInicial(e.target.value)}
+        />
 
-        <button disabled={!puntoVentaSeleccionado} onClick={handleAbrirCaja}>
+        <button 
+          onClick={handleAbrirCaja}
+          disabled={!selectedSucursal || !puntoVentaSeleccionado || montoInicial === ""}
+        >
           Aperturar Caja
         </button>
       </div>
     );
   }
 
+  // Renderizado del componente
   return (
     <div className="sales-component">
       {/* Panel de búsqueda de productos */}
@@ -945,6 +968,19 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
             CU02: Generar Comprobante
           </button>
         )}
+      </div>
+
+      <div className="close-pos-btn">
+        <button
+          className="close-cash-btn"
+          onClick={() => {
+            const montoFinalReal = prompt("Ingrese el monto real en caja:");
+            if (montoFinalReal === null) return;
+            handleCerrarCaja();
+          }}
+        >
+          Cerrar Caja
+        </button>
       </div>
     </div>
   );
