@@ -161,10 +161,22 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
     try {
       const data = await usarioCajaAbierta();
 
-      if (data.abierta) {
+      if (data.abierta && data.arqueo) {
         console.log("Caja abierta encontrada:", data);
+        const sucursalId =
+          typeof data.arqueo.sucursal === "number"
+            ? data.arqueo.sucursal
+            : data.arqueo.sucursal.id;
+
+        const puntoVentaId =
+          typeof data.arqueo.punto_venta === "number"
+            ? data.arqueo.punto_venta
+            : data.arqueo.punto_venta.id;
+
         setEstadoCaja(data.arqueo);
         setCajaAbierta(true);
+        setSelectedSucursal(sucursalId);
+        setPuntoVentaSeleccionado(puntoVentaId);
       } else {
         console.log("No hay caja abierta para el usuario.");
         setCajaAbierta(false);
@@ -178,12 +190,6 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
   };
 
   // cargar estado de caja al cambiar punto de venta
-  useEffect(() => {
-    if (puntoVentaSeleccionado) {
-      cargarEstadoCaja();
-    }
-  }, [puntoVentaSeleccionado]);
-
   const cargarEstadoCaja = async () => {
     if (!puntoVentaSeleccionado) return;
 
@@ -616,7 +622,9 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
   if (!cajaAbierta) {
     return (
       <div className="open-cash-panel">
-        <h2>No hay caja abierta</h2>
+        <h2>
+            {estadoCaja ? 'Tiene una caja abierta en otro punto de venta' : 'No hay caja abierta'}
+        </h2>
 
         <select onChange={(e) => setSelectedSucursal(+e.target.value)}>
           <option value="">Sucursal</option>
