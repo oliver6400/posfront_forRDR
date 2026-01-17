@@ -5,8 +5,7 @@ import './SalesComponent.css';
 import type {
   ProductoConStock,
   Cliente,
-  MetodoPago,
-  EstadoVenta,
+  MetodoPago, 
   Sucursal,
   CrearVentaPayload,
   PuntoVenta,
@@ -17,8 +16,7 @@ import {
   searchProducts,
   createSale,
   generateInvoice,
-  getPaymentMethods,
-  getVentaStates,
+  getPaymentMethods, 
   getSucursales,
   searchClientByNit,
   createClient,
@@ -70,8 +68,7 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
   //aun en desarrollo (para el metodo de pago)
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-  // Estados para configuración
-  const [estados, setEstados] = useState<EstadoVenta[]>([]);
+  // Estados para configuración 
   const [sucursales, setSucursales] = useState<Sucursal[]>([]);
   const [selectedSucursal, setSelectedSucursal] = useState<number | null>(null);
 
@@ -108,14 +105,12 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
 
   const loadInitialData = async () => {
     try {
-      const [metodosData, estadosData, sucursalesData] = await Promise.all([
+      const [metodosData, sucursalesData] = await Promise.all([ 
         getPaymentMethods(),
-        getVentaStates(),
         getSucursales()
       ]);
 
-      setPaymentMethods(metodosData);
-      setEstados(estadosData);
+      setPaymentMethods(metodosData); 
       setSucursales(sucursalesData);
 
       // Seleccionar primera sucursal por defecto
@@ -162,27 +157,29 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
       const data = await usarioCajaAbierta();
 
       if (data.abierta && data.arqueo) {
-        console.log("Caja abierta encontrada:", data);
+        const arqueo = data.arqueo;
+
+        setEstadoCaja(arqueo);
+        setCajaAbierta(true);
+
+        // ✅ Normalización segura
         const sucursalId =
-          typeof data.arqueo.sucursal === "number"
-            ? data.arqueo.sucursal
-            : data.arqueo.sucursal.id;
+          typeof arqueo.sucursal === 'number'
+            ? arqueo.sucursal
+            : arqueo.sucursal.id;
 
         const puntoVentaId =
-          typeof data.arqueo.punto_venta === "number"
-            ? data.arqueo.punto_venta
-            : data.arqueo.punto_venta.id;
-
-        setEstadoCaja(data.arqueo);
-        setCajaAbierta(true);
+          typeof arqueo.punto_venta === 'number'
+            ? arqueo.punto_venta
+            : arqueo.punto_venta.id;
         setSelectedSucursal(sucursalId);
         setPuntoVentaSeleccionado(puntoVentaId);
-      } else {
-        console.log("No hay caja abierta para el usuario.");
+      } else { 
         setCajaAbierta(false);
+        setEstadoCaja(null);
       }
-    } catch {
-      console.error("Error verificando caja abierta");
+    } catch (error) {
+      console.error("Error verificando caja abierta", error);
       setCajaAbierta(false);
     } finally {
       setLoading(false);
@@ -531,13 +528,11 @@ const SalesComponent: React.FC<SalesComponentProps> = ({ user }) => {
 
       setIsProcessing(true);
       try {
-        const estadoPendiente = estados.find(e => e.nombre?.toLowerCase().includes('pendiente'));
-
+ 
         const saleData: CrearVentaPayload = {
           sucursal: selectedSucursal,
           punto_venta: puntoVentaSeleccionado,
-          cliente: selectedClient?.id,
-          estado_venta: estadoPendiente?.id || 1,
+          cliente: selectedClient?.id,  
           detalles: cart.map(item => ({
             producto: item.producto.id,
             cantidad: item.cantidad,

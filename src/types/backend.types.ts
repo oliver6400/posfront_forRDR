@@ -87,12 +87,7 @@ export interface Cliente {
   nombre: string;
   razon_social: string;
   email: string;
-}
-
-export interface EstadoVenta {
-  id: number;
-  nombre: string;
-}
+} 
 
 // 📦 INVENTARIO - Basado en apps/inventario/models.py
 export interface Producto {
@@ -154,8 +149,7 @@ export interface Venta {
   sucursal: number | Sucursal;
   punto_venta: number | PuntoVenta;
   usuario: number | Usuario;
-  cliente?: number | Cliente;
-  estado_venta: number | EstadoVenta;
+  cliente?: number | Cliente; 
   fecha_hora: Timestamp;
   total_bruto: number;
   total_descuento: number;
@@ -242,8 +236,7 @@ export interface VentaConDetalles extends Venta {
 export interface CrearVentaPayload {
   sucursal: number;
   punto_venta: number;
-  cliente?: number;
-  estado_venta: number;
+  cliente?: number; 
   detalles: Array<{
     producto: number;
     cantidad: number;

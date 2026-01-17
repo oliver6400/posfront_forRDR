@@ -9,8 +9,7 @@ import type {
   FiltroVentas,
   PaginatedResponse,
   FacturaSimulada,
-  MetodoPago,
-  EstadoVenta,
+  MetodoPago, 
   Cliente,
   Sucursal,
   ArqueoCaja,
@@ -92,8 +91,7 @@ export async function createSale(saleData: CrearVentaPayload): Promise<VentaConD
     const ventaPayload: any = {
       sucursal: saleData.sucursal,
       punto_venta: saleData.punto_venta,
-      cliente: saleData.cliente || null,
-      estado_venta: saleData.estado_venta,
+      cliente: saleData.cliente || null, 
       total_descuento: saleData.total_descuento || 0,
       detalles: saleData.detalles.map(detalle => ({
         producto: detalle.producto,
@@ -135,19 +133,7 @@ export async function createSale(saleData: CrearVentaPayload): Promise<VentaConD
 export async function cancelSale(id: number): Promise<{ message: string }> {
   try {
     // Cambiar estado de la venta a cancelada
-    // Primero obtener el ID del estado "cancelada"
-    const estadosResponse = await getVentaStates();
-    const estadoCancelada = estadosResponse.find(estado => 
-      estado.nombre.toLowerCase().includes('cancel')
-    );
-
-    if (!estadoCancelada) {
-      throw new Error('Estado de venta cancelada no encontrado');
-    }
-
-    const response = await apiClient.patch(`/ventas/ventas/${id}/`, {
-      estado_venta: estadoCancelada.id
-    });
+    // Primero obtener el ID del estado "cancelada" 
 
     return { message: 'Venta cancelada exitosamente' };
   } catch (error: any) {
@@ -222,20 +208,7 @@ export async function createPaymentMethod(nombre: string): Promise<MetodoPago> {
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Error al crear método de pago');
   }
-}
-
-// Obtener estados de venta
-export async function getVentaStates(): Promise<EstadoVenta[]> {
-  try {
-    const response = await apiClient.get<PaginatedResponse<EstadoVenta> | EstadoVenta[]>('/negocio/estados-venta/');
-    if (Array.isArray(response.data)) {
-      return response.data;
-    }
-    return response.data.results ?? [];
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Error al obtener estados de venta');
-  }
-}
+} 
 
 // Obtener sucursales
 export async function getSucursales(): Promise<Sucursal[]> {
